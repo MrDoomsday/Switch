@@ -17,14 +17,29 @@
         bit                             ready;
 
 
-        SVA_CHECK_VLD: assert property (
+        SVA_CHECK_STABLE_VLD: assert property (
             @(posedge clk) disable iff(!reset_n) 
             valid & ~ready |-> ##1 valid
-        ) else $error("SVA error valid change 1->0 for ready is equal to 0");
+        ) else $error("SVA error: VALID change 1->0 for ready is equal to 0");
 
-        SVA_CHECK_LAST: assert property (
+        SVA_CHECK_STABLE_ID: assert property (
             @(posedge clk) disable iff(!reset_n)
-            valid & ~ready |-> ##1 last == $past(last)
-        ) else $error("SVA error last change for valid & !ready");
+            valid & ~ready |-> ##1 $stable(id)
+        ) else $error("SVA error: ID change for valid & !ready");
+
+        SVA_CHECK_STABLE_DATA: assert property (
+            @(posedge clk) disable iff(!reset_n)
+            valid & ~ready |-> ##1 $stable(data)
+        ) else $error("SVA error: DATA change for valid & !ready");
+
+        SVA_CHECK_STABLE_USER: assert property (
+            @(posedge clk) disable iff(!reset_n)
+            valid & ~ready |-> ##1 $stable(user)
+        ) else $error("SVA error: USER change for valid & !ready");
+
+        SVA_CHECK_STABLE_LAST: assert property (
+            @(posedge clk) disable iff(!reset_n)
+            valid & ~ready |-> ##1 $stable(last)
+        ) else $error("SVA error: LAST change for valid & !ready");
 
     endinterface: stream_intf

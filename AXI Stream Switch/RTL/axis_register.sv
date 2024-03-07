@@ -88,15 +88,15 @@ generate
         assign m_valid_o = s_valid_reg;
     end
     else if(PIPE_CNT > 1) begin
-        bit     [$clog2(PIPE_CNT):0]    credit_words;//количество кредитов (слов, которые накопитель может принять)
-        bit                             pipe_ready      [PIPE_CNT-1:0];
-        bit     [T_ID_WIDTH-1:0]        pipe_id         [PIPE_CNT-1:0];
-        bit     [T_DATA_WIDTH-1:0]      pipe_data       [PIPE_CNT-1:0];
-        bit     [T_USER_WIDTH-1:0]      pipe_user       [PIPE_CNT-1:0];
-        bit                             pipe_last       [PIPE_CNT-1:0];
-        bit                             pipe_valid      [PIPE_CNT-1:0];
+        bit     [$clog2(PIPE_CNT):0]                    credit_words;//количество кредитов (слов, которые накопитель может принять)
+        bit     [PIPE_CNT-1:0]                          pipe_ready;
+        bit     [PIPE_CNT-1:0][T_ID_WIDTH-1:0]          pipe_id   ;
+        bit     [PIPE_CNT-1:0][T_DATA_WIDTH-1:0]        pipe_data ;
+        bit     [PIPE_CNT-1:0][T_USER_WIDTH-1:0]        pipe_user ;
+        bit     [PIPE_CNT-1:0]                          pipe_last ;
+        bit     [PIPE_CNT-1:0]                          pipe_valid;
 
-        bit                             put_pipe, get_pipe;
+        bit                                             put_pipe, get_pipe;
 
         //credit counter
         assign put_pipe = s_valid_i & s_ready_o;
@@ -177,6 +177,17 @@ generate
         assign m_user_o     =   pipe_user[PIPE_CNT-1];
         assign m_last_o     =   pipe_last[PIPE_CNT-1];
         assign m_valid_o    =   pipe_valid[PIPE_CNT-1];
+
+    //ASSERT 
+        SVA_CHECK_PIPE_VALID_FULL: assert property (
+            @(posedge clk) disable iff(!reset_n)
+            ~s_ready_o |-> &pipe_valid
+        ) else $error("SVA error: ready is zero, but pipeline not full");
+    
+        SVA_CHECK_CREDIT_FULL: assert property (
+            @(posedge clk) disable iff(~reset_n)
+            ~s_ready_o |-> credit_words == 0
+        ) else $error("SVA error: ready is zero, but credit counter > 0");
     end
 
 endgenerate
