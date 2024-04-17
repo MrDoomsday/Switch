@@ -2,7 +2,7 @@ module irr_arbiter_tb();
 
 
 
-    localparam WIDTH_REQ = 3;
+    localparam WIDTH_REQ = 8;
     localparam SIZE_POINTER = $clog2(WIDTH_REQ);//размер указателя на REQUEST
 
     bit     clk;

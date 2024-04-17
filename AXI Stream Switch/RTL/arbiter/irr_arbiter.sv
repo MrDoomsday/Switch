@@ -122,7 +122,7 @@ module irr_arbiter #(
 
     SVA_CHECK_GNT_ONEHOT: assert property (
         @(posedge clk) disable iff(!reset_n)
-        gnt_vld_o |-> $onehot0(gnt_o)
+        gnt_vld_o |-> $onehot(gnt_o)
     ) else $error("SVA error: More than two GRANT received simultaneously");
 
     SVA_CHECK_ID: assert property (
