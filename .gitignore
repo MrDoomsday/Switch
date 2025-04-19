@@ -1,6 +1,7 @@
+*.mti
+*.mpf
+*.mti
 *.qdb
 *.qpg
 *.qtl
 *.wlf
-*.mti
-*.mpf

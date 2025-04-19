@@ -69,7 +69,7 @@ module stream_xbar #(
 
     // input buffer
     generate
-        for(genvar i = 0; i < S_DATA_COUNT; i++) begin:gen_axis_skid
+        for(genvar i = 0; i < S_DATA_COUNT; i++) begin:gen_s_axis_skid
             sx_axis_skid #(
                 .DATA_WIDTH ( DATA_WIDTH ),
                 .ID_WIDTH   ( 1 ),
@@ -106,7 +106,7 @@ module stream_xbar #(
             assign s_mux_axis_last[i] = s_last_reg;
             assign s_mux_axis_keep[i] = s_keep_reg;
             for(genvar j = 0; j < S_DATA_COUNT; j++) begin
-                assign s_mux_axis_valid[i][j] = s_valid_reg[j] & (s_dest_reg[j] == j);
+                assign s_mux_axis_valid[i][j] = s_valid_reg[j] & (s_dest_reg[j] == i);
                 assign s_mux_ready_crossbar[j][i] = s_mux_axis_ready[i][j];
             end
         end
@@ -138,7 +138,7 @@ module stream_xbar #(
                 .DATA_WIDTH ( DATA_WIDTH ),
                 .ID_WIDTH   ( ID_WIDTH ),
                 .DEST_WIDTH ( 1 )
-            ) s_axis_skid (
+            ) m_axis_skid (
                 .clk                ( clk                   ),
                 .reset_n            ( reset_n               ),
 
